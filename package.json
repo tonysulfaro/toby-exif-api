@@ -11,7 +11,9 @@
     "test": "node test.js"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "ejs": "^2.5.6",
+    "exif": "^0.6.0",
     "express": "^4.15.2"
   },
   "devDependencies": {
