@@ -1,4 +1,5 @@
 const express = require('express')
+const fileUpload = require('express-fileupload')
 const path = require('path')
 const PORT = process.env.PORT || 5000
 
@@ -14,6 +15,11 @@ express()
     res.header("Access-Control-Allow-Headers", 'Origin,X-Requested-With,Content-Type,Accept,content-type,application/json')
     next()
   })
+  .use(fileUpload({
+    useTempFiles: true,
+    temoFIleDir: '/tmp/',
+    createParentPath: true
+  }))
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
   .get('/', (req, res) => res.render('pages/index'))
