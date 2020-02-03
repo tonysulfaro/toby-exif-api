@@ -29,7 +29,7 @@ express()
     console.log('now time for walleye image')
 
     try {
-      ExifImage({ image: 'walleye.jpg' }, function (error, exifData) {
+      ExifImage({ image: req.files.userImage }, function (error, exifData) {
         if (error) {
           console.log('Error: ' + error.message)
         }
