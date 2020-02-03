@@ -15,11 +15,7 @@ express()
     res.header("Access-Control-Allow-Headers", 'Origin,X-Requested-With,Content-Type,Accept,content-type,application/json')
     next()
   })
-  .use(fileUpload({
-    useTempFiles: true,
-    temoFIleDir: '/tmp/',
-    createParentPath: true
-  }))
+  .use(fileUpload())
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
   .get('/', (req, res) => res.render('pages/index'))
@@ -28,10 +24,33 @@ express()
     console.log(req)
     console.log('now time for walleye image')
 
+    let sampleFile;
+    let uploadPath;
+
+    if (!req.files || Object.keys(req.files).length === 0) {
+      res.status(400).send('No files were uploaded.');
+      return;
+    }
+
+    console.log('req.files >>>', req.files); // eslint-disable-line
+
+    sampleFile = req.files.sampleFile;
+    uploadPath = __dirname + '/uploads/' + sampleFile.name;
+
+    sampleFile.mv(uploadPath, function(err) {
+      if (err) {
+        return res.status(500).send(err);
+      }
+
+      // res.send('File uploaded to ' + uploadPath);
+    });
+  
+    // send exif response
     try {
-      ExifImage({ image: req.files.userImage }, function (error, exifData) {
+      ExifImage({ image: uploadPath}, function (error, exifData) {
         if (error) {
           console.log('Error: ' + error.message)
+          res.send(400, error.message)
         }
         else {
           console.log(exifData) // Do something with your data!
@@ -40,6 +59,7 @@ express()
       })
     } catch (error) {
       console.log('Error: ' + error.message)
+      res.send(400, error.message)
     }
   })
   .listen(PORT, () => console.log(`Listening on ${ PORT}`))
